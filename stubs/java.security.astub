@@ -1,0 +1,18 @@
+/*
+ Example of how to whitelist crypto algorithms. Strengthen or weaken the whitelist according to
+ the policy or compliance regime that you want to follow. The algorithms in this file are just
+ an example and should not be considered sufficient.
+ You may also want to add stubs for KeyPairGenerator, SecureRandom, and Signature here.
+*/
+package java.security;
+
+import com.amazon.checkerframework.cryptopolicy.qual.*;
+
+// https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#MessageDigest
+// Algorithms are not case-sensitive.
+class MessageDigest {
+	static MessageDigest getInstance(@CryptoWhiteListed({"sha-*", "md5"}) @CryptoWarnings({"md5"}) String algorithm);
+	static MessageDigest getInstance(@CryptoWhiteListed({"sha-*", "md5"}) @CryptoWarnings({"md5"}) String algorithm, Provider provider);
+	static MessageDigest getInstance(@CryptoWhiteListed({"sha-*", "md5"}) @CryptoWarnings({"md5"}) String algorithm, String provider);
+}
+

@@ -1,0 +1,20 @@
+/*
+ Example of how to whitelist crypto algorithms. Strengthen or weaken the whitelist according to
+ the policy or compliance regime that you want to follow. The algorithms in this file are just
+ an example and should not be considered sufficient.
+ You may also want to add stubs for Mac, and KeyAgreement here.
+*/
+package javax.crypto;
+
+import com.amazon.checkerframework.cryptopolicy.qual.*;
+
+// Algorithm name can be found here:
+// https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#Cipher
+// Algorithms are not case-sensitive.
+class Cipher {
+	static Cipher getInstance(@CryptoWhiteListed({"aes/gcm.*", "rsa/ecb.*"}) String algorithm);
+
+	static Cipher getInstance(@CryptoWhiteListed({"aes/gcm.*", "rsa/ecb.*"}) String algorithm, Provider provider);
+
+	static Cipher getInstance(@CryptoWhiteListed({"aes/gcm.*", "rsa/ecb.*"}) String algorithm, String provider);
+}
