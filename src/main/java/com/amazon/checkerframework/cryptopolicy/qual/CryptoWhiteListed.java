@@ -19,7 +19,13 @@ import org.checkerframework.framework.qual.SubtypeOf;
 public @interface CryptoWhiteListed {
     /**
      * White listed algorithms as list of regular expressions
-     * @return List of white-listed regexps.
+     * @return List of white-listed regexs.
      */
     String[] value() default {};
+
+    /**
+     * List of algorithms that should emit a warning even when white listed.
+     * @return List of regexs that emit a warning
+     */
+    String[] warnOn() default {};
 }

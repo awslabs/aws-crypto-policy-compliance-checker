@@ -17,7 +17,7 @@ public class Precision {
 
         badString(BAD_CIPHER);
 
-        falsePositive(GOOD_CIPHER);
+        requiresAnnotation(GOOD_CIPHER);
     }
 
     static void badString(final String badCipher) throws Exception {
@@ -25,7 +25,7 @@ public class Precision {
         Cipher.getInstance(badCipher);
     }
 
-    static void falsePositive(final String goodCipher) throws Exception {
+    static void requiresAnnotation(final String goodCipher) throws Exception {
         // :: error: (crypto.cipher.unknown)
         Cipher.getInstance(goodCipher);
     }

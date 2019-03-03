@@ -4,6 +4,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.security.MessageDigest;
 
 import com.amazon.checkerframework.cryptopolicy.qual.SuppressCryptoWarning;
 
@@ -11,7 +12,6 @@ public class CryptoTests {
 
     private static final String BAD_CIPHER = "des";
 
-    // From IMDbAdvertisingSite for testing SuppressCryptoWarning
     public static final String ENCRYPTION_ALGORITHM = "DES";
     public static final String FULL_ENCRYPTION_ALGORITHM = "DES/CBC/PKCS5Padding";
     public static final String SALT = "imdbrulz";
@@ -27,6 +27,9 @@ public class CryptoTests {
 
         // :: error: (crypto.policy.violation)
         Cipher.getInstance(ENCRYPTION_ALGORITHM);
+
+        // :: error: (crypto.policy.violation)
+        MessageDigest.getInstance(BAD_CIPHER);
     }
 
     @SuppressCryptoWarning(issue = "https://github.com/myteam/myproject/issues/123")

@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.amazon.checkerframework.cryptopolicy.qual.CryptoBlackListed;
 import com.amazon.checkerframework.cryptopolicy.qual.CryptoPolicyBottom;
-import com.amazon.checkerframework.cryptopolicy.qual.CryptoWarnings;
 import com.amazon.checkerframework.cryptopolicy.qual.CryptoWhiteListed;
 import com.amazon.checkerframework.cryptopolicy.qual.UnknownCryptoAlgorithm;
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
@@ -56,10 +55,6 @@ public class CryptoPolicyComplianceAnnotatedTypeFactory extends BaseAnnotatedTyp
             } else if (AnnotationUtils.areSameByClass(subtype, CryptoWhiteListed.class)
                        && AnnotationUtils.areSameByClass(supertype, CryptoWhiteListed.class)) {
                 // both are whitelists
-                return compareCryptoListTypes(subtype, supertype);
-            } else if (AnnotationUtils.areSameByClass(subtype, CryptoWarnings.class)
-                       && AnnotationUtils.areSameByClass(supertype, CryptoWarnings.class)) {
-                // both are CryptoWarnings
                 return compareCryptoListTypes(subtype, supertype);
             } else if (AnnotationUtils.areSameByClass(subtype, CryptoBlackListed.class)
                        && AnnotationUtils.areSameByClass(supertype, CryptoBlackListed.class)) {

@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.amazon.checkerframework.cryptopolicy.qual.CryptoBlackListed;
-import com.amazon.checkerframework.cryptopolicy.qual.CryptoWarnings;
 import com.amazon.checkerframework.cryptopolicy.qual.CryptoWhiteListed;
 import com.amazon.checkerframework.cryptopolicy.qual.SuppressCryptoWarning;
 import com.sun.source.tree.ClassTree;
@@ -66,11 +65,10 @@ public class CryptoPolicyComplianceVisitor extends BaseTypeVisitor {
         final List<String> stringValAnnotations = getLowerCasedStringValAnnotations(rhsTree);
         final AnnotationMirror whiteListAnno = lhsType.getAnnotation(CryptoWhiteListed.class);
         final AnnotationMirror blackListAnno = lhsType.getAnnotation(CryptoBlackListed.class);
-        final AnnotationMirror warningListAnno = lhsType.getAnnotation(CryptoWarnings.class);
 
         // If the lhs isn't a Crypto Policy whitelist or blacklist, or if the rhs does not have
         // any StringVal annotations then there is nothing to do.
-        if ((whiteListAnno == null && blackListAnno == null && warningListAnno == null)) {
+        if ((whiteListAnno == null && blackListAnno == null)) {
             super.commonAssignmentCheck(lhsType, rhsTree, errorKey);
             return;
         }
@@ -81,17 +79,18 @@ public class CryptoPolicyComplianceVisitor extends BaseTypeVisitor {
         }
 
         final Set<String> disallowedCiphers = new HashSet<>();
+        final Set<String> warningCiphers = new HashSet<>();
         if (whiteListAnno != null) {
-            disallowedCiphers.addAll(matchCiphersFromAnnotation(whiteListAnno, stringValAnnotations, false));
+            List<String> regexList = AnnotationUtils.getElementValueArray(whiteListAnno, "value", String.class, true);
+            disallowedCiphers.addAll(matchCiphersFromAnnotation(regexList, stringValAnnotations, false));
+
+            List<String> warnList = AnnotationUtils.getElementValueArray(whiteListAnno, "warnOn", String.class, true);
+            warningCiphers.addAll(matchCiphersFromAnnotation(warnList, stringValAnnotations, true));
         }
 
         if (blackListAnno != null) {
-            disallowedCiphers.addAll(matchCiphersFromAnnotation(blackListAnno, stringValAnnotations, true));
-        }
-
-        final Set<String> warningCiphers = new HashSet<>();
-        if (warningListAnno != null) {
-            warningCiphers.addAll(matchCiphersFromAnnotation(warningListAnno, stringValAnnotations, true));
+            List<String> regexList = AnnotationUtils.getElementValueArray(blackListAnno, "value", String.class, true);
+            disallowedCiphers.addAll(matchCiphersFromAnnotation(regexList, stringValAnnotations, true));
         }
 
         // remove all disallowedCiphers from the warningCiphers because we report an error about those already.
@@ -118,17 +117,14 @@ public class CryptoPolicyComplianceVisitor extends BaseTypeVisitor {
      * are not case-sensitive.
      * Set positive to get the sublist of things that do not match.
      *
-     * @param cipherAnnotation The annotation with the regex list.
-     * @param stringList       The list that should be matched.
-     * @param positive         True, to retain all matches, False to retain strings that don't have a match.
+     * @param regexList  List of regex that should be matched
+     * @param stringList The list that should be matched.
+     * @param positive   True, to retain all matches, False to retain strings that don't have a match.
      * @return Sublist of strings.
      */
-    private List<String> matchCiphersFromAnnotation(final AnnotationMirror cipherAnnotation,
+    private List<String> matchCiphersFromAnnotation(final List<String> regexList,
                                                     final List<String> stringList,
                                                     final boolean positive) {
-        // get the whitelist to check against
-        List<String> regexList = AnnotationUtils.getElementValueArray(cipherAnnotation, "value", String.class, true);
-
         // if there are no valid whitelist items, don't continue
         if (regexList.isEmpty()) {
             return new ArrayList<>();
@@ -201,7 +197,11 @@ public class CryptoPolicyComplianceVisitor extends BaseTypeVisitor {
             // of validation. Instead, we just check if the string is a valid URL to deter users
             // from cheating by putting in empty string, etc.
             try {
-                final URL issueURL = new URL(anno.issue());
+                final URL issueUrl = new URL(anno.issue());
+                System.out.println("Suppressing warning for "
+                                   + suppressedString
+                                   + " is approved by "
+                                   + issueUrl.toString());
             } catch (MalformedURLException e) {
                 checker.report(Result.failure(BAD_URL_KEY, suppressedString, anno.issue()), elt);
             }
@@ -209,5 +209,4 @@ public class CryptoPolicyComplianceVisitor extends BaseTypeVisitor {
         }
         return false;
     }
-
 }
