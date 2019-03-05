@@ -12,9 +12,9 @@ import com.amazon.checkerframework.cryptopolicy.qual.*;
 // https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#Cipher
 // Algorithms are not case-sensitive.
 class Cipher {
-	static Cipher getInstance(@CryptoWhiteListed({"aes/gcm.*", "rsa/ecb.*"}) String algorithm);
+	static Cipher getInstance(@CryptoWhiteListed(value={"aes/gcm.*", "rsa/ecb.*"}) String algorithm);
 
-	static Cipher getInstance(@CryptoWhiteListed({"aes/gcm.*", "rsa/ecb.*"}) String algorithm, Provider provider);
+	static Cipher getInstance(@CryptoWhiteListed(value={"aes/gcm.*", "rsa/ecb.*"}) String algorithm, Provider provider);
 
-	static Cipher getInstance(@CryptoWhiteListed({"aes/gcm.*", "rsa/ecb.*"}) String algorithm, String provider);
+	static Cipher getInstance(@CryptoWhiteListed(value={"aes/gcm.*", "rsa/ecb.*"}) String algorithm, String provider);
 }

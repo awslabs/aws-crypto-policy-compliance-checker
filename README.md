@@ -58,7 +58,7 @@ You can add more stub files to the `-Astubs` parameter as needed.
 
 ## What Ciphers are approved
 The list of approved ciphers can be found as annotations in the `stubs` folder. The stub files are only an example.
-Strengthen or weaken the whitelist according to the policy or compliance regime that you want to follow.
+Strengthen or weaken the white-list according to the policy or compliance regime that you want to follow.
 Remember to adjust the warning messages in `src/main/resources/com/amazon/checkerframework/cryptopolicy/messages.properties`
 accordingly (not that messages in this file have to be in a single line and line breaks have to be encoded as `\n`.
 
@@ -67,10 +67,17 @@ from the [CheckerFramework documentation](https://checkerframework.org/manual/#s
 `@CryptoWhiteListed` annotation which takes an array of regular expressions as argument. E.g.
 
 ```
-@CryptoWhiteListed({"HmacSHA-?(1.*|2.*|384|512.*)"}) @CryptoWarnings({"HmacSHA-?1"}) String arg
+@CryptoWhiteListed(value={"HmacSHA-?(1.*|2.*|384|512.*)"}) String arg
 ```
 
-Any algorithm passed as `arg` that is not part of the whitelist will cause an error.
+To white-list all values that match HmacSHA-1.*, HmacSHA-2.*, etc, or
+
+```
+@CryptoWhiteListed(value={"HmacSHA-?(1.*|2.*|384|512.*)"}, warnOn={"HmacSHA-?1"}) String arg
+```
+
+To while-list the same set of string values, but emit a compiler warning for HmacSHA1 and HmacSHA-1.
+Any algorithm passed as `arg` that is not part of the white-list will cause an error.
 
 ### How do I add an exception?
 
@@ -80,6 +87,6 @@ a valid URL to a issue where you got approval to use the algorithm.
 
 
 ### Whitelisted Algorithms
-The whitelist in this repository is only an example. We do not suggest that all algorithms in the list a strong, or
+The white-list in this repository is only an example. We do not suggest that all algorithms in the list a strong, or
 that other are not. Also, the stub files only cover Java crypto classes. If you want to use this type system with
 other crypto libraries such as bouncy castle, you will have to extend the list.
