@@ -26,9 +26,9 @@ dependencyManagement {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile group: 'org.checkerframework', name: 'testlib', version: '2.+'
+    testCompile group: 'org.checkerframework', name: 'testlib', version: '2.8.+'
 
-    compile group: 'org.checkerframework', name: 'checker', version: '2.+'
+    compile group: 'org.checkerframework', name: 'checker', version: '2.8.+'
 }
 
 task copyDependencies(type: Copy) {
