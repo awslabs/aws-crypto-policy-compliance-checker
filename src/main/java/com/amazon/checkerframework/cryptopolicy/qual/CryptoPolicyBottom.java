@@ -7,8 +7,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.checkerframework.framework.qual.ImplicitFor;
-import org.checkerframework.framework.qual.LiteralKind;
 import org.checkerframework.framework.qual.SubtypeOf;
 import org.checkerframework.framework.qual.TargetLocations;
 import org.checkerframework.framework.qual.TypeUseLocation;
@@ -21,6 +19,5 @@ import org.checkerframework.framework.qual.TypeUseLocation;
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @SubtypeOf({CryptoBlackListed.class, CryptoWhiteListed.class})
 @TargetLocations({TypeUseLocation.EXPLICIT_LOWER_BOUND, TypeUseLocation.EXPLICIT_UPPER_BOUND})
-@ImplicitFor(literals = LiteralKind.NULL, typeNames = Void.class)
 public @interface CryptoPolicyBottom {
 }
