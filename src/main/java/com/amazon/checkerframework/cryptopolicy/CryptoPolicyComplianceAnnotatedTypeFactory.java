@@ -1,7 +1,9 @@
 package com.amazon.checkerframework.cryptopolicy;
 
 import javax.lang.model.element.AnnotationMirror;
+import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.Set;
 
 import com.amazon.checkerframework.cryptopolicy.qual.CryptoBlackListed;
 import com.amazon.checkerframework.cryptopolicy.qual.CryptoPolicyBottom;
@@ -25,6 +27,13 @@ public class CryptoPolicyComplianceAnnotatedTypeFactory extends BaseAnnotatedTyp
     public CryptoPolicyComplianceAnnotatedTypeFactory(final BaseTypeChecker checker) {
         super(checker);
         this.postInit();
+    }
+
+
+    @Override
+    protected Set<Class<? extends Annotation>> createSupportedTypeQualifiers() {
+        return getBundledTypeQualifiers(CryptoBlackListed.class,
+                CryptoPolicyBottom.class, CryptoWhiteListed.class, UnknownCryptoAlgorithm.class);
     }
 
     @Override
