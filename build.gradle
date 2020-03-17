@@ -1,3 +1,7 @@
+
+apply plugin: 'maven'
+apply plugin: 'signing'
+
 apply plugin: 'java'
 
 sourceCompatibility = 1.8
@@ -17,6 +21,11 @@ buildscript {
 }
 
 apply plugin: "io.spring.dependency-management"
+apply plugin: "maven-publish"
+
+group = "com.amazon.checkerframework"
+archivesBaseName = "cryptopolicy"
+version = "0.0.1"
 
 dependencyManagement {
     imports {
@@ -26,7 +35,7 @@ dependencyManagement {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile group: 'org.checkerframework', name: 'testlib', version: '2.8.+'
+    testCompile group: 'org.checkerframework', name: 'testlib', version: '2.5.+'
 
     compile group: 'org.checkerframework', name: 'checker', version: '2.8.+'
 }
@@ -35,3 +44,67 @@ task copyDependencies(type: Copy) {
     from configurations.compile
     into 'dependencies'
 }
+
+artifacts {
+    archives jar
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/martinschaef/aws-crypto-policy-compliance-checker")
+            credentials {
+                username = awslabsUsername
+                password = awslabsPassword
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
+//
+//uploadArchives {
+//    doFirst {
+//        repositories {
+//            mavenDeployer {
+//                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+//
+//                repository(url: "https://maven.pkg.github.com/martinschaef/aws-crypto-policy-compliance-checker") {
+//                    authentication(userName: awslabsUsername, password: awslabsPassword)
+//                }
+//
+//                pom.project {
+//                    name 'Crypto Policy Compliance Checker'
+//                    packaging 'jar'
+//                    description 'Type system to check java crypto api usage'
+//                    url 'https://github.com/awslabs/data-classification-checker'
+//
+//                    scm {
+//                        connection 'scm:git:git@github.com:martinschaef/data-classification-checker.git'
+//                        developerConnection 'scm:git:git@github.com:martinschaef/data-classification-checker.git'
+//                        url 'git@github.com:martinschaef/data-classification-checker.git'
+//                    }
+//
+//                    licenses {
+//                        license {
+//                            name 'Apache License 2.0'
+//                            url 'http://www.apache.org/licenses/'
+//                        }
+//                    }
+//
+//                    developers {
+//                        developer {
+//                            id 'martinschaef'
+//                            name 'Martin Schaef'
+//                            email 'schaef@amazon.com'
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
