@@ -1,110 +1,111 @@
+// TODO: We can't seem to use the nexus-staging plugin since
+// our package is put in with other softwareamazon repos
+// and the plugin can't automatically find ours.  For now
+// we'll just use the UI. An automatic solution would be nice.
 
-apply plugin: 'maven'
-apply plugin: 'signing'
+plugins {
+    id 'io.spring.dependency-management' version '1.0.7.RELEASE'
+}
 
 apply plugin: 'java'
+apply plugin: 'maven'
 
 sourceCompatibility = 1.8
-targetCompatibility = 1.8
+group = 'software.amazon.checkerframework'
+archivesBaseName = 'aws-crypto-policy-compliance-checker'
+
+version = '1.0.1'
 
 repositories {
     mavenCentral()
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE"
-    }
-}
-
-apply plugin: "io.spring.dependency-management"
-apply plugin: "maven-publish"
-
-group = "com.amazon.checkerframework"
-archivesBaseName = "cryptopolicy"
-version = "0.0.1"
-
-dependencyManagement {
-    imports {
-        mavenBom 'com.amazonaws:aws-java-sdk-bom:1.11.228'
-    }
+configurations {
+    // for putting Error Prone javac in bootclasspath for running tests
+    // on Java 8 JDKs
+    errorproneJavac
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile group: 'org.checkerframework', name: 'testlib', version: '2.5.+'
+    testCompile group: 'org.checkerframework', name: 'testlib', version: '2.5.4'
 
     compile group: 'org.checkerframework', name: 'checker', version: '2.8.+'
 }
 
-task copyDependencies(type: Copy) {
-    from configurations.compile
-    into 'dependencies'
+dependencyManagement {
+    imports {
+        mavenBom 'com.amazonaws:aws-java-sdk-bom:1.11.731'
+    }
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
 }
 
 artifacts {
-    archives jar
+    archives javadocJar, sourcesJar
 }
 
-publishing {
+if (project.hasProperty("signing.keyId")) {
+    apply plugin: 'signing'
+    signing {
+        sign configurations.archives
+    }
+}
+
+uploadArchives {
     repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/martinschaef/aws-crypto-policy-compliance-checker")
-            credentials {
-                username = awslabsUsername
-                password = awslabsPassword
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: 'https://aws.oss.sonatype.org/service/local/staging/deploy/maven2/') {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: 'https://aws.oss.sonatype.org/content/repositories/snapshots/') {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'AWS crypto policy compliance checker'
+                packaging 'jar'
+                description 'A checker for the Checker Framework that assures that KMS keys are 256 bits.'
+                url 'https://github.com/awslabs/aws-crypto-policy-compliance-checker'
+
+                scm {
+                    connection 'https://github.com/awslabs/aws-crypto-policy-compliance-checker.git'
+                    developerConnection 'git@github.com:awslabs/aws-crypto-policy-compliance-checker.git'
+                    url 'https://github.com/awslabs/aws-crypto-policy-compliance-checker'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'kelloggm'
+                        name 'Martin Kellogg'
+                        email 'kelloggm@cs.washington.edu'
+                    }
+
+                    developer {
+                        id 'schaef'
+                        name 'Martin Schaef'
+                        email 'schaef@amazon.com'
+                    }
+                }
             }
         }
     }
-    publications {
-        gpr(MavenPublication) {
-            from(components.java)
-        }
-    }
 }
-//
-//uploadArchives {
-//    doFirst {
-//        repositories {
-//            mavenDeployer {
-//                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-//
-//                repository(url: "https://maven.pkg.github.com/martinschaef/aws-crypto-policy-compliance-checker") {
-//                    authentication(userName: awslabsUsername, password: awslabsPassword)
-//                }
-//
-//                pom.project {
-//                    name 'Crypto Policy Compliance Checker'
-//                    packaging 'jar'
-//                    description 'Type system to check java crypto api usage'
-//                    url 'https://github.com/awslabs/data-classification-checker'
-//
-//                    scm {
-//                        connection 'scm:git:git@github.com:martinschaef/data-classification-checker.git'
-//                        developerConnection 'scm:git:git@github.com:martinschaef/data-classification-checker.git'
-//                        url 'git@github.com:martinschaef/data-classification-checker.git'
-//                    }
-//
-//                    licenses {
-//                        license {
-//                            name 'Apache License 2.0'
-//                            url 'http://www.apache.org/licenses/'
-//                        }
-//                    }
-//
-//                    developers {
-//                        developer {
-//                            id 'martinschaef'
-//                            name 'Martin Schaef'
-//                            email 'schaef@amazon.com'
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
