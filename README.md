@@ -8,7 +8,7 @@ The checker builds on the Checker Framework (www.checkerframework.org), an open-
 the Java compiler's typechecker. A typechecker is perfect for checking a compliance rule, because typecheckers are
 *sound*, meaning that they never miss errors, but might report false positives. In other words, a typechecker
 over-approximates what your program might do at runtime, so if the checker reports that the code is safe, you can be
-confident that it is. If the checker issues an error, there are three possibilities:
+confident that it is. If the checker issues an error, there are two possibilities:
 
 1. there is a real issue: you are using a crypto algorithm that is not whitelisted in the stubs folder, OR
 2. the type system cannot understand what algorithm you are trying to use. This happens if you load the algorithm
@@ -76,7 +76,7 @@ To white-list all values that match HmacSHA-1.*, HmacSHA-2.*, etc, or
 @CryptoWhiteListed(value={"HmacSHA-?(1.*|2.*|384|512.*)"}, warnOn={"HmacSHA-?1"}) String arg
 ```
 
-To while-list the same set of string values, but emit a compiler warning for HmacSHA1 and HmacSHA-1.
+To white-list the same set of string values, but emit a compiler warning for HmacSHA1 and HmacSHA-1.
 Any algorithm passed as `arg` that is not part of the white-list will cause an error.
 
 ### How do I add an exception?
