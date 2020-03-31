@@ -32,9 +32,9 @@ configurations {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile group: 'org.checkerframework', name: 'framework-test', version: '3.1.+'
+    testCompile group: 'org.checkerframework', name: 'framework-test', version: '3.2.+'
 
-    compile group: 'org.checkerframework', name: 'checker', version: '3.1.+'
+    compile group: 'org.checkerframework', name: 'checker', version: '3.2.+'
 
     implementation "com.google.errorprone:javac:9+181-r4173-1"
     errorproneJavac "com.google.errorprone:javac:9+181-r4173-1"
