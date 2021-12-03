@@ -1,13 +1,14 @@
 name: Analyze with CodeGuru Reviewer
 
-on: [push]
+on: [push, pull_request]
 
 permissions:
     id-token: write
-    contents: write    # This is required for actions/checkout@v1
+    contents: read
+    security-events: write 
 
 jobs:
-  build:
+  CodeGuru:
     name: Clone your repository
     runs-on: ubuntu-latest
     steps:
@@ -23,7 +24,7 @@ jobs:
       run: ./gradlew build -x test
 
     - name: Configure AWS credentials from Test account
-      uses: aws-actions/configure-aws-credentials@master
+      uses: aws-actions/configure-aws-credentials@v1
       with:
         role-to-assume: arn:aws:iam::048169001733:role/GuruGitHubCICDRole
         aws-region: us-west-2
